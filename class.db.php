@@ -391,6 +391,61 @@ class DB
     
     
     /**
+     * Create Table into database
+     *
+     * Example usage:
+     * $table_data = array(
+     *      'id' => 'INT(11) NOT NULL AUTO_INCREMENT',
+     *      'name' => 'VARCHAR(255) NOT NULL',
+     *      'pic' => 'VARCHAR(255) NULL',
+     *      'PRIMARY KEY' => '(id)'
+     * );
+     * $database->create( 'name_table', $table_data );
+     *
+     * @access public
+     * @param string table name
+     * @param array table name field => field Specifications
+     * @return bool
+     *
+     */
+    public function create( $table, $variables = array() )
+    {
+        self::$counter++;
+        //Make sure the array isn't empty
+        if( empty( $variables ) )
+        {
+            return false;
+        }
+
+        $sql = "CREATE TABLE IF NOT EXISTS ". $table . ' ( ';
+
+        $sq = array();
+
+        foreach( $variables as $field => $value )
+        {
+            $sq[] = $field .' '. $value;
+        }
+
+        $sq = $sq;
+
+        $sql .= implode(', ', $sq);
+
+        $query = $this->link->query( $sql . ' )' );
+
+        if( $this->link->error && $query == 'FALSE')
+        {
+            //return false;
+            $this->log_db_errors( $this->link->error, $sql );
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    
+    
+    /**
      * Insert data into database table
      *
      * Example usage:
